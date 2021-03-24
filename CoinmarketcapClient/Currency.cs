@@ -18,5 +18,6 @@ namespace NoobsMuc.Coinmarketcap.Client
         public DateTime LastUpdated { get; set; }
         public Double MarketCapConvert { get; set; }
         public string ConvertCurrency { get; set; }
+        public string CriptoLogo { get; set; }
     }
 }

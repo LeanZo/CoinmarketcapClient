@@ -21,7 +21,7 @@ namespace NoobsMuc.Coinmarketcap.Client
         }
 
 
-        public List<Currency> MakeRequest(Method method, string convert, bool oneItemonly)
+        public List<Currency> MakeRequest(Method method, string convert, bool oneItemonly, bool infoRequest = false)
         {
             if (string.IsNullOrEmpty(convert))
                 throw new ArgumentException("currency not set.");
@@ -39,24 +39,41 @@ namespace NoobsMuc.Coinmarketcap.Client
             List<Currency> currencyList = new List<Currency>();
             foreach (ItemData data in result.DataList)
             {
-                Currency item = new Currency
+                if (!infoRequest)
                 {
-                    Id = data.id.ToString(),
-                    Name = data.name,
-                    Symbol = data.symbol,
-                    Rank = data.cmc_rank.ToString(),
-                    Price = data.quote.CurrenyPriceInfo.price ?? 0d,
-                    Volume24hUsd = data.quote.CurrenyPriceInfo.volume_24h ?? 0,
-                    MarketCapUsd = data.quote.CurrenyPriceInfo.volume_24h ?? 0,
-                    PercentChange1h = data.quote.CurrenyPriceInfo.percent_change_1h ?? 0,
-                    PercentChange24h = data.quote.CurrenyPriceInfo.percent_change_24h ?? 0,
-                    PercentChange7d = data.quote.CurrenyPriceInfo.percent_change_7d ?? 0,
-                    LastUpdated = data.quote.CurrenyPriceInfo.last_updated,
-                    MarketCapConvert = data.quote.CurrenyPriceInfo.market_cap ?? 0d,
-                    ConvertCurrency = convert
-                };
+                    Currency item = new Currency
+                    {
+                        Id = data.id.ToString(),
+                        Name = data.name,
+                        Symbol = data.symbol,
+                        Rank = data.cmc_rank.ToString(),
+                        Price = data.quote.CurrenyPriceInfo.price ?? 0d,
+                        Volume24hUsd = data.quote.CurrenyPriceInfo.volume_24h ?? 0,
+                        MarketCapUsd = data.quote.CurrenyPriceInfo.volume_24h ?? 0,
+                        PercentChange1h = data.quote.CurrenyPriceInfo.percent_change_1h ?? 0,
+                        PercentChange24h = data.quote.CurrenyPriceInfo.percent_change_24h ?? 0,
+                        PercentChange7d = data.quote.CurrenyPriceInfo.percent_change_7d ?? 0,
+                        LastUpdated = data.quote.CurrenyPriceInfo.last_updated,
+                        MarketCapConvert = data.quote.CurrenyPriceInfo.market_cap ?? 0d,
+                        ConvertCurrency = convert,
+                        CriptoLogo = data.logo
+                    };
 
-                currencyList.Add(item);
+                    currencyList.Add(item);
+                }
+                else
+                {
+                    Currency item = new Currency
+                    {
+                        Id = data.id.ToString(),
+                        Name = data.name,
+                        Symbol = data.symbol,
+                        Rank = data.cmc_rank.ToString(),
+                        CriptoLogo = data.logo
+                    };
+
+                    currencyList.Add(item);
+                }
             }
 
             return currencyList;

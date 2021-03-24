@@ -6,6 +6,8 @@ namespace NoobsMuc.Coinmarketcap.Client
     {
         List<string> GetConvertCurrencyList();
 
+        IEnumerable<Currency> GetCurrencyInfo(List<string> idList);
+
         Currency GetCurrencyBySlug(string slug);
         Currency GetCurrencyBySlug(string slug, string convertCurrency);
 

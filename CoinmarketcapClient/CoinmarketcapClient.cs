@@ -12,6 +12,7 @@ namespace NoobsMuc.Coinmarketcap.Client
         private const string UrlBase = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/";
         private const string UrlPartList = "listings/latest";
         private const string UrlPartItem = "quotes/latest";
+        private const string UrlPartInfo = "info";
         private string _ApiKey;
 
         public CoinmarketcapClient(string apiKey)
@@ -21,6 +22,12 @@ namespace NoobsMuc.Coinmarketcap.Client
         List<string> ICoinmarketcapClient.GetConvertCurrencyList()
         {
             return new List<string>{"AUD", "BRL", "CAD", "CHF", "CNY", "EUR", "GBP", "HKD", "IDR", "INR", "JPY", "KRW", "MXN", "RUB"};
+        }
+
+
+        IEnumerable<Currency> ICoinmarketcapClient.GetCurrencyInfo(List<string> idList)
+        {
+            return CurrencyInfo(idList);
         }
 
         Currency ICoinmarketcapClient.GetCurrencyBySlug(string slug)
@@ -43,6 +50,21 @@ namespace NoobsMuc.Coinmarketcap.Client
             return CurrencyBySlugList(slugList.ToList(), convertCurrency);
         }
 
+
+        private IEnumerable<Currency> CurrencyInfo(List<string> idList)
+        {
+            var queryArguments = new Dictionary<string, string>
+            {
+                {"id", string.Join(",", idList.Select(item => item.ToLower()))}
+            };
+            
+            var convertCurrency = "-1";
+
+            var client = GetWebApiClient(UrlPartInfo, ref convertCurrency, queryArguments);
+            var result = client.MakeRequest(Method.GET, convertCurrency, true, true);
+
+            return result;
+        }
         private IEnumerable<Currency> CurrencyBySlugList(List<string> slugList, string convertCurrency)
         {
             var queryArguments = new Dictionary<string, string>
@@ -56,13 +78,13 @@ namespace NoobsMuc.Coinmarketcap.Client
             return result;
         }
 
-        private WebApiClient GetWebApiClient(
-            string urlPart, ref string convertCurrency, Dictionary<string, string> queryArguments)
+        private WebApiClient GetWebApiClient(string urlPart, ref string convertCurrency, Dictionary<string, string> queryArguments)
         {
             if (string.IsNullOrEmpty(convertCurrency))
                 convertCurrency = "USD";
 
-            queryArguments.Add("convert", convertCurrency);
+            if(convertCurrency != "-1")
+                queryArguments.Add("convert", convertCurrency);
 
             UriBuilder uri = new UriBuilder(UrlBase + urlPart);
             var client = new WebApiClient(uri, queryArguments, _ApiKey);

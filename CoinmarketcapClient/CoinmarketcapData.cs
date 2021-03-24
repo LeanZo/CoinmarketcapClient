@@ -46,6 +46,7 @@ namespace NoobsMuc.Coinmarketcap.Client
         public int cmc_rank { get; set; }
         public DateTime last_updated { get; set; }
         public Quote quote { get; set; }
+        public string logo { get; set; }
     }
 
     public class Status
